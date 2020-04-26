@@ -1,23 +1,24 @@
 	org	100h
 
-	;Ejercicio 1.
+	;EJERCICIO 1
 
 ;Ultimos 5 digitos de mi carnet: 91813
-;Promedio = (9+1+8+1+3)/5 = 4.4 ~= 4
+;Promedio = (9+1+8+1+3) / 5 = 4.4 ~= 4
 
-	mov	WORD[200h], "M"
-	mov	WORD[201h], "e"
-	mov	WORD[203h], "r"
-	mov	WORD[204h], "e"
-	mov	WORD[205h], "c"
-	mov	WORD[206h], "u"
-	mov	WORD[207h], "p"
-	mov	WORD[208h], "e"
-	mov	WORD[209h], "r"
-	mov	WORD[20Ah], "o"
+section .text
+
+	mov	di, 0d	;indice
+	mov	cx, len;	tamaño del mensaje
+
+loop1:	mov	bl, [comnt+di]
+	mov	[200h+di], bl
+	inc 	di
+	
+	cmp	di, cx	;seguir bucle mientras indice sea inferior al tamaño del mensaje
+	jb	loop1
 
 
-	;Ejercicio 2
+	;EJERCICIO 2
 
 	mov	ax, 0000h	;enfermos
 	mov	bx, 0000h	;indice
@@ -26,28 +27,28 @@
 	mov 	al, 2d	;numero inicial de enfermos
 	mov	si, 2d	;multiplo a utilizar en cada estimacion
 
-loop1:	mul 	si	;estimacion
+loop20: mul 	si	;estimacion
 	mov	[210h+bx], ax	;guardar estimacion
 	inc 	bl 	;indice++
 
 	cmp	bl, 6d	;seguir bucle mientras indice sea inferior a 6d
-	jb	loop1	
+	jb	loop20
 
 ;las estimaciones se pasan de 255 a partir de la septima
 	
-loop2:	mul 	si	
-	mov	[210h+bx], ah
+loop21: mul 	si	
+	mov	[210h+bx], al
 	inc 	bl
-	mov	[210h+bx], al	
+	mov	[210h+bx], ah	
 	inc 	bl
 
 	cmp	bl, 16d	
-	jb	loop2	
+	jb	loop21	
 
 
-	;Ejercicio 3
+	;EJERCICIO 3
 
-	mov	ax, 0000h	;variable temporal
+	mov	ax, 0000h	;variable aritmética
 	mov	bx, 0000h	;indice
 	mov	cx, 0000h	;F[n-2]
 	mov	dx, 0000h	;F[n-1]
@@ -71,10 +72,16 @@ loop3:	mov	ax, dx	;AX = F[n-1]
 
 	mov	ax, dx	
 	add	ax, cx	
-	mov	[220h+bx], ah
-	inc 	bl 	
 	mov	[220h+bx], al
+	inc 	bl 	
+	mov	[220h+bx], ah
 	mov	cx, dx	
 	mov	dx, ax 	
 
 	int 20h
+
+
+section	.data
+
+comnt	db	'Me recupero'
+len	equ	$-comnt 
