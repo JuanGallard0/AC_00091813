@@ -8,11 +8,11 @@
 section .text
 
 	mov	di, 0d	;indice
-	mov	cx, len;	tamaño del mensaje
+	mov	cx, len	;tamaño del mensaje
 
-loop1:	mov	bl, [comnt+di]
-	mov	[200h+di], bl
-	inc 	di
+loop1:	mov	bl, [comnt+di]	;buscar letra del mensaje
+	mov	[200h+di], bl 	;guardar letra en memoria
+	inc 	di 	;indice++
 	
 	cmp	di, cx	;seguir bucle mientras indice sea inferior al tamaño del mensaje
 	jb	loop1
