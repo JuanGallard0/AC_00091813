@@ -1,87 +1,89 @@
 	org	100h
 
+
+section	.text
+
 	;EJERCICIO 1
 
-;Ultimos 5 digitos de mi carnet: 91813
+;Ultimos 5 dígitos de mi carnet: 91813
 ;Promedio = (9+1+8+1+3) / 5 = 4.4 ~= 4
-
-section .text
-
-	mov	di, 0d	;indice
-	mov	cx, len	;tamaño del mensaje
-
-loop1:	mov	bl, [comnt+di]	;buscar letra del mensaje
-	mov	[200h+di], bl 	;guardar letra en memoria
-	inc 	di 	;indice++
+;Mensaje a utilizar: "Me recupero"
 	
-	cmp	di, cx	;seguir bucle mientras indice sea inferior al tamaño del mensaje
-	jb	loop1
+	mov	bx, 0d	
+	mov	cx, len
+	mov	di, 0d	
 
+loop1:	mov	bl, [comnt+di]	
+	mov	[200h+di], bl 	
+	inc 	di 	
+	loop 	loop1	
+	
 
 	;EJERCICIO 2
 
-	mov	ax, 0000h	;enfermos
-	mov	bx, 0000h	;indice
-	mov 	si, 0000h	;multiplo
+	mov 	ax, 2d 	;numero inicial de enfermos
+	mov	cx, 11d	;numero de estimaciones a calcular
+	mov	di, 0d	;índice de memoria
+	mov	si, 2d 	;múltiplo para calcular estimaciones
 
-	mov 	al, 2d	;numero inicial de enfermos
-	mov	si, 2d	;multiplo a utilizar en cada estimacion
-
-loop20: mul 	si	;estimacion
-	mov	[210h+bx], ax	;guardar estimacion
-	inc 	bl 	;indice++
-
-	cmp	bl, 6d	;seguir bucle mientras indice sea inferior a 6d
-	jb	loop20
-
-;las estimaciones se pasan de 255 a partir de la septima
+	;estimacion
+loop2:	mul 	si
 	
-loop21: mul 	si	
-	mov	[210h+bx], al
-	inc 	bl
-	mov	[210h+bx], ah	
-	inc 	bl
+	;verificación del tamaño de la estimación
+	cmp	ax, 255d
+	ja	jump1
 
-	cmp	bl, 16d	
-	jb	loop21	
+	;guardado de estimación inferior o igual a  255d
+	mov	[210h+di], ax	
+	inc 	di
+	loop 	loop2
+
+	;guardado de estimación superior a 255d
+jump1:	mov	[210h+di], al
+	inc 	di
+	mov	[210h+di], ah	
+	inc 	di
+	loop 	loop2
 
 
 	;EJERCICIO 3
+	
+	mov	bx, 0d	;F[n-2]
+	mov	dx, 1d 	;F[n-1]
+	mov	cx, 14 	;numero de terminos a calcular
+	mov	di, 2d 	;indice de memoria
 
-	mov	ax, 0000h	;variable aritmética
-	mov	bx, 0000h	;indice
-	mov	cx, 0000h	;F[n-2]
-	mov	dx, 0000h	;F[n-1]
+	;inicialización de terminos base
+	mov	[220h], bl
+	mov	[221h], dl
 
-	mov	bl, 2d	;indice = 2
-	mov 	dl, 1d 	;F[1] = 1
-	mov	[220h], cl	;guardar F[0]
-	mov	[221h], dl	;guardar F[1]
+	;calculo de término de fibonacci
+loop3:	mov	ax, bx
+	add	ax, dx
+	mov	bx, dx
+	mov	dx, ax
 
-loop3:	mov	ax, dx	;AX = F[n-1]
-	add	ax, cx	;AX += F[n-2]
-	mov	[220h+bx], ax 	;guardar AX
-	mov	cx, dx	;F[n-2] = F[n-1]
-	mov	dx, ax 	;F[n-1] = AX
-	inc 	bl 	;indice++
+	;verificación del tamaño de término
+	cmp	ax, 255d
+	ja	jump2
 
-	cmp	bl, 14d	;seguir bucle mientras indice sea inferior a 14d
-	jb	loop3	
+	;guardado de término inferior o igual a  255d
+	mov	[220h+di], ax
+	inc	di
+	loop 	loop3
 
-;solo el 16avo termino se pasa de 255 
+	;guardado de término superior a 255d
+jump2:	mov	[220h+di], al
+	inc 	di
+	mov	[220h+di], ah
+	inc 	di
+	loop 	loop3
 
-	mov	ax, dx	
-	add	ax, cx	
-	mov	[220h+bx], al
-	inc 	bl 	
-	mov	[220h+bx], ah
-	mov	cx, dx	
-	mov	dx, ax 	
 
 	int 20h
 
 
 section	.data
 
-comnt	db	'Me recupero'
+comnt	db	"Me recupero"
 len	equ	$-comnt 
